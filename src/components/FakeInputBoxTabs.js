@@ -3,6 +3,7 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Box from '@mui/material/Box'
 import FacebookIcon from '@mui/icons-material/Facebook'
+import TwitterIcon from '@mui/icons-material/Twitter'
 import FeedIcon from '@mui/icons-material/Feed'
 import FakeInputForm from './FakeInputForm'
 import Result from './Result'
@@ -24,8 +25,19 @@ class FakeInputBoxTabs extends React.Component {
 
     this.state = {
       tabValue: 0,
-      searchInputs: ['', ''],
-      output: ['', '']
+      labels: ['Facebook', 'Twitter', 'Normal News'],
+      adorement: [
+        'https://www.facebook.com/.../posts/',
+        'https://twitter.com/.../status/',
+        ''
+      ],
+      placeholder: [
+        'Paste only the post-id number',
+        'Paste only the post-id number',
+        'Type the news here'
+      ],
+      searchInputs: ['', '', ''],
+      output: ['', '', '']
     }
   }
 
@@ -80,7 +92,7 @@ class FakeInputBoxTabs extends React.Component {
   scrapeFacebookData = async (postLink) => {
     try {
       const response = await axios.get(
-        'http://localhost:5000/api/query/facebook-scrape?link=' + postLink
+        'http://localhost:5000/facebook-scrape?id=' + postLink
       )
       return response
     } catch (error) {
@@ -88,76 +100,58 @@ class FakeInputBoxTabs extends React.Component {
     }
   }
 
-  getNewsAPI = async (sentence) => {
-    var now = new Date()
-    now.setDate(now.getDate() - 19)
-    now = dateFormat(now, 'yyyy-mm-dd')
-
-    var url =
-      'https://newsapi.org/v2/everything?' +
-      'q=' +
-      sentence +
-      '&from=' +
-      now +
-      '&sortBy=popularity&' +
-      'apiKey=eb8a5695e4a04479a5c688e080103f0c'
-
-    //var url ='https://cors-anywhere.herokuapp.com/https://newsapi.org/v2/everything?q=tesla&from=2021-12-27&sortBy=popularity&apiKey=eb8a5695e4a04479a5c688e080103f0c'
+  translateIndividually = async (sentence) => {
     try {
-      const response = await axios.get(url, {
-        header: {
-          'Content-Type': 'multipart/form-data',
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-          'Access-Control-Allow-Credentials': true
-        }
-      })
-      return response
+      const response = await axios.get(
+        'http://localhost:5000/translate?text=' + sentence
+      )
+      return response.data
     } catch (error) {
       console.error(error)
     }
   }
 
-  getSimilarNews = async (sentences) => {
-    var related_news = {}
+  translateToEnglish = async (sentences) => {
+    var translated_sentences = []
 
     for (var i = 0; i < sentences.length; i++) {
-      const response = await this.getNewsAPI(sentences[i])
-      related_news[sentences[i]] = response.data.articles
+      var translated_sentence = await this.translateIndividually(sentences[i])
+      console.log(translated_sentence)
+      translated_sentences.push(translated_sentence)
     }
 
-    console.log('related_news: ')
-    console.log(related_news)
-    return related_news
+    console.log('Translated Test: ')
+    console.log(translated_sentences)
+    return translated_sentences
   }
 
-  getSimilarNewsFromFile = () => {
-    return results
-  }
-
-  getLineToNewsListMap = (news_api_response) => {
-    var postList = []
-    for (var sentence in news_api_response) {
-      var curList_withOtherInfo = news_api_response[sentence]
-      var curTitles = []
-      curList_withOtherInfo.forEach((data) => {
-        curTitles.push(data.title)
+  getSimilarNews = async (sentences) => {
+    try {
+      const response = await axios.post('http://localhost:5000/query-list', {
+        queryList: sentences
       })
-
-      var curJson = {
-        line: sentence,
-        news: curTitles
-      }
-
-      postList.push(curJson)
+      console.log(response)
+      return response
+    } catch (error) {
+      console.error(error)
     }
 
-    return postList
+    /*axios
+      .post('http://localhost:5000/query-list', {
+        queryList: sentences
+      })
+      .then(async function (response) {
+        console.log('testing b-response')
+        console.log(response)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })*/
   }
 
   getVerdictFromStanceAPI = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/execute')
+      const response = await axios.get('http://localhost:5000/execute')
       return response.data
     } catch (error) {
       console.error(error)
@@ -178,10 +172,7 @@ class FakeInputBoxTabs extends React.Component {
       var postLink = postText
       var scraper_response = await this.scrapeFacebookData(postLink)
 
-      postText = scraper_response.data[0].post_text
-    } else {
-      //for general news
-      postText = this.state.searchInputs[tab]
+      postText = scraper_response.data.post_text
     }
 
     //remove Links from the sentences
@@ -195,39 +186,22 @@ class FakeInputBoxTabs extends React.Component {
     //remove empty sentences from the list
     sentences = this.removeEmptySentence(sentences)
 
-    console.log('sentence')
-    console.log(sentences)
+    //translate to english
+    sentences = await this.translateToEnglish(sentences)
 
-    var news_api_response = await this.getSimilarNews(sentences)
-    //var news_api_response = await this.getSimilarNewsFromFile(sentences)
+    //get all similar news from google-search
+    var something = await this.getSimilarNews(sentences)
 
-    var postList = await this.getLineToNewsListMap(news_api_response)
+    //execute route line
+    var verdict = await this.getVerdictFromStanceAPI()
+    console.log(verdict)
+    alert(verdict)
 
-    console.log('post Request List')
-    console.log(postList)
-
-    var self = this
-    axios
-      .post('http://localhost:5000/api/related-news', {
-        data: postList
-      })
-      .then(async function (response) {
-        console.log('testing b-response')
-        console.log(response)
-
-        var verdict = await self.getVerdictFromStanceAPI()
-        console.log(verdict)
-        alert(verdict)
-
-        var newOutput = self.state.output
-        newOutput[tab] = verdict
-        self.setState({
-          output: newOutput
-        })
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
+    var newOutput = this.state.output
+    newOutput[tab] = verdict
+    this.setState({
+      output: newOutput
+    })
   }
 
   handleTabChange = (event, newValue) => {
@@ -248,39 +222,67 @@ class FakeInputBoxTabs extends React.Component {
           >
             <Tab
               icon={<FacebookIcon />}
-              label="Facebook"
+              label={this.state.labels[0]}
               {...a11yProps(0)}
               iconPosition="start"
             />
+
+            <Tab
+              icon={<TwitterIcon />}
+              label={this.state.labels[1]}
+              {...a11yProps(1)}
+              iconPosition="start"
+            />
+
             <Tab
               icon={<FeedIcon />}
-              label="Normal News"
-              {...a11yProps(1)}
+              label={this.state.labels[2]}
+              {...a11yProps(2)}
               iconPosition="start"
             />
           </Tabs>
         </Box>
+
         <div>
           <TabPanel value={this.state.tabValue} index={0}>
             <FakeInputForm
               id={0}
+              label={this.state.labels[0]}
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[0]}
               handleSubmit={this.handleSubmit}
-              adorement={'https://www.facebook.com/'}
-              placeholder={'Paste the post link'}
+              adorement={this.state.adorement[0]}
+              placeholder={this.state.placeholder[0]}
             />
-            <p className="mt-5">{this.state.output[0]}</p>
+            <p className="mt-5">
+              <Result />
+            </p>
           </TabPanel>
+
           <TabPanel value={this.state.tabValue} index={1}>
             <FakeInputForm
               id={1}
+              label={this.state.labels[1]}
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[1]}
               handleSubmit={this.handleSubmit}
-              placeholder={'Provide the news'}
+              adorement={this.state.adorement[1]}
+              placeholder={this.state.placeholder[1]}
             />
             <p className="mt-5">{this.state.output[1]}</p>
+          </TabPanel>
+
+          <TabPanel value={this.state.tabValue} index={2}>
+            <FakeInputForm
+              id={2}
+              label={this.state.labels[2]}
+              handleSearchInput={this.handleSearchInput}
+              searchInputValue={this.state.searchInputs[2]}
+              handleSubmit={this.handleSubmit}
+              adorement={this.state.adorement[2]}
+              placeholder={this.state.placeholder[2]}
+            />
+            <p className="mt-5">{this.state.output[2]}</p>
           </TabPanel>
         </div>
       </Box>

@@ -9,8 +9,6 @@ import FakeInputForm from './FakeInputForm'
 import Result from './Result'
 import TabPanel from './TabPanel'
 import axios from 'axios'
-import results from '../data/result_news_20.json'
-import dateFormat from 'dateformat'
 
 function a11yProps(index) {
   return {
@@ -50,49 +48,10 @@ class FakeInputBoxTabs extends React.Component {
     })
   }
 
-  //function to remove links from sentences
-  removeLinksAndGetSentences = (text) => {
-    var wordsInText = text.split('\n')
-
-    var filteredWord = []
-    wordsInText.forEach((word) => {
-      if (!word.includes('http') && !word.includes('www'))
-        filteredWord.push(word)
-    })
-
-    return filteredWord
-  }
-
-  //function to filterTextFromSpecialCharacters
-  filterTextFromSpecialCharacters = (text) => {
-    text = text.trim()
-
-    var filteredText = []
-    var specialChars = '/*!@#$%^&*()"{}_[]|\\?/<>,.'
-    for (var i = 0; i < text.length; i++) {
-      if (specialChars.includes(text.charAt(i))) {
-        filteredText.push(' ')
-      } else {
-        filteredText.push(text.charAt(i))
-      }
-    }
-
-    return filteredText.join('').trim()
-  }
-
-  removeEmptySentence = (sentences) => {
-    var nonEmptySentences = []
-    sentences.forEach((sentence) => {
-      if (sentence !== '') nonEmptySentences.push(sentence)
-    })
-
-    return nonEmptySentences
-  }
-
-  scrapeFacebookData = async (postLink) => {
+  analyseFacebookPost = async (postId) => {
     try {
       const response = await axios.get(
-        'http://localhost:5000/facebook-scrape?id=' + postLink
+        'http://localhost:5000/facebook-scrape?id=' + postId
       )
       return response
     } catch (error) {
@@ -100,59 +59,23 @@ class FakeInputBoxTabs extends React.Component {
     }
   }
 
-  translateIndividually = async (sentence) => {
+  analyseTwitterPost = async (postId) => {
     try {
       const response = await axios.get(
-        'http://localhost:5000/translate?text=' + sentence
+        'http://localhost:5000/tweet-scrape?id=' + postId
       )
-      return response.data
-    } catch (error) {
-      console.error(error)
-    }
-  }
-
-  translateToEnglish = async (sentences) => {
-    var translated_sentences = []
-
-    for (var i = 0; i < sentences.length; i++) {
-      var translated_sentence = await this.translateIndividually(sentences[i])
-      console.log(translated_sentence)
-      translated_sentences.push(translated_sentence)
-    }
-
-    console.log('Translated Test: ')
-    console.log(translated_sentences)
-    return translated_sentences
-  }
-
-  getSimilarNews = async (sentences) => {
-    try {
-      const response = await axios.post('http://localhost:5000/query-list', {
-        queryList: sentences
-      })
-      console.log(response)
       return response
     } catch (error) {
       console.error(error)
     }
-
-    /*axios
-      .post('http://localhost:5000/query-list', {
-        queryList: sentences
-      })
-      .then(async function (response) {
-        console.log('testing b-response')
-        console.log(response)
-      })
-      .catch(function (error) {
-        console.log(error)
-      })*/
   }
 
-  getVerdictFromStanceAPI = async () => {
+  analyseNormalNews = async (news) => {
     try {
-      const response = await axios.get('http://localhost:5000/execute')
-      return response.data
+      const response = await axios.get(
+        'http://localhost:5000/plain-text?text=' + news
+      )
+      return response
     } catch (error) {
       console.error(error)
     }
@@ -163,42 +86,33 @@ class FakeInputBoxTabs extends React.Component {
     event.preventDefault()
 
     var tab = this.state.tabValue
-    var sentences = []
 
     var postText = this.state.searchInputs[tab] //to get the input
 
     if (tab === 0) {
-      //scrape data for facebook
-      var postLink = postText
-      var scraper_response = await this.scrapeFacebookData(postLink)
+      //analyse facebook post
 
-      postText = scraper_response.data.post_text
+      var postId = postText
+      var verdict = await this.analyseFacebookPost(postId)
+
+      alert(verdict.data)
+    } else if (tab === 1) {
+      //analyse twitter post
+
+      var postId = postText
+      var verdict = await this.analyseTwitterPost(postId)
+
+      alert(verdict.data)
+    } else {
+      //analyse normal news
+
+      var verdict = await this.analyseNormalNews(postText)
+
+      alert(verdict.data)
     }
-
-    //remove Links from the sentences
-    sentences = this.removeLinksAndGetSentences(postText)
-
-    //remove out special characters
-    for (var i = 0; i < sentences.length; i++) {
-      sentences[i] = this.filterTextFromSpecialCharacters(sentences[i])
-    }
-
-    //remove empty sentences from the list
-    sentences = this.removeEmptySentence(sentences)
-
-    //translate to english
-    sentences = await this.translateToEnglish(sentences)
-
-    //get all similar news from google-search
-    var something = await this.getSimilarNews(sentences)
-
-    //execute route line
-    var verdict = await this.getVerdictFromStanceAPI()
-    console.log(verdict)
-    alert(verdict)
 
     var newOutput = this.state.output
-    newOutput[tab] = verdict
+    newOutput[tab] = verdict.data
     this.setState({
       output: newOutput
     })

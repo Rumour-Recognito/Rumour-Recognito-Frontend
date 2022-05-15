@@ -49,36 +49,90 @@ class FakeInputBoxTabs extends React.Component {
   }
 
   analyseFacebookPost = async (postId) => {
-    try {
-      const response = await axios.get(
-        'http://localhost:5000/facebook-scrape?id=' + postId
-      )
-      return response
-    } catch (error) {
-      console.error(error)
+    var executed = false
+    var response_got = null
+    axios
+      .get('http://localhost:5000/facebook-scrape?id=' + postId)
+      .then(function (response) {
+        // handle success
+        response_got = response
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+      .then(function () {
+        executed = true
+      })
+
+    while (!executed) {
+      try {
+        const response = await axios.get('http://localhost:5000/status')
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
     }
+
+    return response_got
   }
 
   analyseTwitterPost = async (postId) => {
-    try {
-      const response = await axios.get(
-        'http://localhost:5000/tweet-scrape?id=' + postId
-      )
-      return response
-    } catch (error) {
-      console.error(error)
+    var executed = false
+    var response_got = null
+    axios
+      .get('http://localhost:5000/tweet-scrape?id=' + postId)
+      .then(function (response) {
+        // handle success
+        response_got = response
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+      .then(function () {
+        executed = true
+      })
+
+    while (!executed) {
+      try {
+        const response = await axios.get('http://localhost:5000/status')
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
     }
+
+    return response_got
   }
 
   analyseNormalNews = async (news) => {
-    try {
-      const response = await axios.get(
-        'http://localhost:5000/plain-text?text=' + news
-      )
-      return response
-    } catch (error) {
-      console.error(error)
+    var executed = false
+    var response_got = null
+    axios
+      .get('http://localhost:5000/plain-text?text=' + news)
+      .then(function (response) {
+        // handle success
+        response_got = response
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+      .then(function () {
+        executed = true
+      })
+
+    while (!executed) {
+      try {
+        const response = await axios.get('http://localhost:5000/status')
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
     }
+
+    return response_got
   }
 
   //On submit of the link
@@ -88,28 +142,25 @@ class FakeInputBoxTabs extends React.Component {
     var tab = this.state.tabValue
 
     var postText = this.state.searchInputs[tab] //to get the input
+    var verdict
 
     if (tab === 0) {
       //analyse facebook post
 
       var postId = postText
       var verdict = await this.analyseFacebookPost(postId)
-
-      alert(verdict.data)
     } else if (tab === 1) {
       //analyse twitter post
 
       var postId = postText
       var verdict = await this.analyseTwitterPost(postId)
-
-      alert(verdict.data)
     } else {
       //analyse normal news
 
       var verdict = await this.analyseNormalNews(postText)
-
-      alert(verdict.data)
     }
+
+    alert(verdict.data)
 
     var newOutput = this.state.output
     newOutput[tab] = verdict.data

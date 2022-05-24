@@ -30,7 +30,13 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired
 }
 
-const steps = ['Web scraping', 'Analsing contents', 'Predicting']
+const steps = [
+  'Scrapping Facebook Data',
+  'Processing Facebook Data',
+  'Translation in Progress',
+  'Populating Knowledge-Base',
+  'Predicting News Veracity'
+]
 
 export default function LinearWithValueLabel() {
   const [progress, setProgress] = React.useState(10)

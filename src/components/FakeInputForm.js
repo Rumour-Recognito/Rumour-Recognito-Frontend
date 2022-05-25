@@ -24,6 +24,7 @@ class FakeInputForm extends React.Component {
         >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
+            type={this.props.inputType}
             placeholder={this.props.placeholder}
             inputProps={{ 'aria-label': this.props.placeholder }}
             onChange={(event) => this.props.handleSearchInput(event)}

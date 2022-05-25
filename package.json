@@ -1,4 +1,5 @@
 {
+  "homepage": "https://Rumour-Recognito.github.io/Rumour-Recognito-Frontend",
   "name": "rumour-recognito",
   "version": "0.1.0",
   "private": true,
@@ -14,6 +15,7 @@
     "axios": "^0.24.0",
     "bootstrap": "^4.5.3",
     "dateformat": "^5.0.2",
+    "gh-pages": "^4.0.0",
     "jquery": "^3.5.1",
     "jquery-ui-dist": "^1.12.1",
     "react": "^17.0.2",
@@ -23,6 +25,8 @@
     "web-vitals": "^2.1.2"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

@@ -5,10 +5,14 @@ import Box from '@mui/material/Box'
 import FacebookIcon from '@mui/icons-material/Facebook'
 import TwitterIcon from '@mui/icons-material/Twitter'
 import FeedIcon from '@mui/icons-material/Feed'
+import ImageSearchTwoToneIcon from '@mui/icons-material/ImageSearchTwoTone';
 import FakeInputForm from './FakeInputForm'
 import Result from './Result'
 import TabPanel from './TabPanel'
 import axios from 'axios'
+
+//var base_url = "http://localhost:5000"
+var base_url = "https://rumor-recognito-backend.herokuapp.com"
 
 function a11yProps(index) {
   return {
@@ -23,19 +27,24 @@ class FakeInputBoxTabs extends React.Component {
 
     this.state = {
       tabValue: 0,
-      labels: ['Facebook', 'Twitter', 'Normal News'],
+      labels: ['Facebook', 'Twitter', 'Normal News', 'Image Analysis'],
+      inputTypes: ['text', 'text', 'text', 'file'],
       adorement: [
         'https://www.facebook.com/.../posts/',
         'https://twitter.com/.../status/',
+        '',
         ''
       ],
       placeholder: [
         'Paste only the post-id number',
         'Paste only the post-id number',
-        'Type the news here'
+        'Type the news here',
+        'Choose your image file (jpeg, jpg or png)'
       ],
-      searchInputs: ['', '', ''],
-      output: ['', '', '']
+      searchInputs: ['', '', '', ''],
+      file: null,
+      fileUrl: null,
+      output: ['', '', '', '']
     }
   }
 
@@ -46,13 +55,21 @@ class FakeInputBoxTabs extends React.Component {
     this.setState({
       searchInputs: newSearchInputs
     })
+    if(this.state.tabValue == 3) {
+      this.setState({
+        file: event.target.files[0],
+        fileUrl: URL.createObjectURL(event.target.files[0])
+      })
+    }
   }
 
-  analyseFacebookPost = async (postId) => {
+  analyseFacebookPost = async (postUrl) => {
     var executed = false
     var response_got = null
     axios
-      .get('http://localhost:5000/facebook-scrape?id=' + postId)
+      .post(base_url + '/facebook-scrape', {
+        link: postUrl
+      })
       .then(function (response) {
         // handle success
         response_got = response
@@ -67,7 +84,7 @@ class FakeInputBoxTabs extends React.Component {
 
     while (!executed) {
       try {
-        const response = await axios.get('http://localhost:5000/status')
+        const response = await axios.get(base_url + '/status')
         console.log(response)
       } catch (error) {
         console.error(error)
@@ -77,11 +94,13 @@ class FakeInputBoxTabs extends React.Component {
     return response_got
   }
 
-  analyseTwitterPost = async (postId) => {
+  analyseTwitterPost = async (postUrl) => {
     var executed = false
     var response_got = null
     axios
-      .get('http://localhost:5000/tweet-scrape?id=' + postId)
+      .post(base_url + '/tweet-scrape', {
+        link: postUrl
+      })
       .then(function (response) {
         // handle success
         response_got = response
@@ -96,7 +115,7 @@ class FakeInputBoxTabs extends React.Component {
 
     while (!executed) {
       try {
-        const response = await axios.get('http://localhost:5000/status')
+        const response = await axios.get(base_url + '/status')
         console.log(response)
       } catch (error) {
         console.error(error)
@@ -110,7 +129,7 @@ class FakeInputBoxTabs extends React.Component {
     var executed = false
     var response_got = null
     axios
-      .get('http://localhost:5000/plain-text?text=' + news)
+      .get(base_url + '/plain-text?text=' + news)
       .then(function (response) {
         // handle success
         response_got = response
@@ -125,7 +144,42 @@ class FakeInputBoxTabs extends React.Component {
 
     while (!executed) {
       try {
-        const response = await axios.get('http://localhost:5000/status')
+        const response = await axios.get(base_url + '/status')
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    return response_got
+  }
+
+  analyseImage = async (imageFile) => {
+    var executed = false
+    var response_got = null
+    const formData = new FormData();
+    formData.append('file', imageFile);
+    axios
+      .post(base_url + '/analyze-image', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then(function (response) {
+        // handle success
+        response_got = response
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+      .then(function () {
+        executed = true
+      })
+
+    while (!executed) {
+      try {
+        const response = await axios.get(base_url + '/status')
         console.log(response)
       } catch (error) {
         console.error(error)
@@ -146,18 +200,17 @@ class FakeInputBoxTabs extends React.Component {
 
     if (tab === 0) {
       //analyse facebook post
-
-      var postId = postText
-      var verdict = await this.analyseFacebookPost(postId)
+      verdict = await this.analyseFacebookPost(postText)
     } else if (tab === 1) {
       //analyse twitter post
-
-      var postId = postText
-      var verdict = await this.analyseTwitterPost(postId)
-    } else {
+      verdict = await this.analyseTwitterPost(postText)
+    } else if (tab === 2) {
       //analyse normal news
 
-      var verdict = await this.analyseNormalNews(postText)
+      verdict = await this.analyseNormalNews(postText)
+    } else {
+      var imageFile = this.state.file
+      verdict = await this.analyseImage(imageFile)
     }
 
     alert(verdict.data)
@@ -205,6 +258,13 @@ class FakeInputBoxTabs extends React.Component {
               {...a11yProps(2)}
               iconPosition="start"
             />
+
+            <Tab
+              icon={<ImageSearchTwoToneIcon />}
+              label={this.state.labels[3]}
+              {...a11yProps(3)}
+              iconPosition="start"
+            />
           </Tabs>
         </Box>
 
@@ -213,6 +273,7 @@ class FakeInputBoxTabs extends React.Component {
             <FakeInputForm
               id={0}
               label={this.state.labels[0]}
+              inputType={this.state.inputTypes[0]}
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[0]}
               handleSubmit={this.handleSubmit}
@@ -228,6 +289,7 @@ class FakeInputBoxTabs extends React.Component {
             <FakeInputForm
               id={1}
               label={this.state.labels[1]}
+              inputType={this.state.inputTypes[1]}
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[1]}
               handleSubmit={this.handleSubmit}
@@ -241,6 +303,7 @@ class FakeInputBoxTabs extends React.Component {
             <FakeInputForm
               id={2}
               label={this.state.labels[2]}
+              inputType={this.state.inputTypes[2]}
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[2]}
               handleSubmit={this.handleSubmit}
@@ -248,6 +311,21 @@ class FakeInputBoxTabs extends React.Component {
               placeholder={this.state.placeholder[2]}
             />
             <p className="mt-5">{this.state.output[2]}</p>
+          </TabPanel>
+
+          <TabPanel value={this.state.tabValue} index={3}>
+            <FakeInputForm
+              id={3}
+              label={this.state.labels[3]}
+              inputType={this.state.inputTypes[3]}
+              handleSearchInput={this.handleSearchInput}
+              searchInputValue={this.state.searchInputs[3]}
+              handleSubmit={this.handleSubmit}
+              adorement={this.state.adorement[3]}
+              placeholder={this.state.placeholder[3]}
+            />
+            <img src={this.state.fileUrl} style={{width: 150, height: 100, marginTop: '10px'}}/>
+            <p className="mt-5">{this.state.output[3]}</p>
           </TabPanel>
         </div>
       </Box>

@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/Rumour-Recognito-Frontend/static/css/main.ea498b24.css",
-    "main.js": "/Rumour-Recognito-Frontend/static/js/main.86a39ee5.js",
+    "main.css": "/Rumour-Recognito-Frontend/static/css/main.2ea306d2.css",
+    "main.js": "/Rumour-Recognito-Frontend/static/js/main.e6a5de94.js",
     "static/media/Home_background.jpg": "/Rumour-Recognito-Frontend/static/media/Home_background.d0ab0d62ed01b304919d.jpg",
     "index.html": "/Rumour-Recognito-Frontend/index.html",
-    "main.ea498b24.css.map": "/Rumour-Recognito-Frontend/static/css/main.ea498b24.css.map",
-    "main.86a39ee5.js.map": "/Rumour-Recognito-Frontend/static/js/main.86a39ee5.js.map"
+    "main.2ea306d2.css.map": "/Rumour-Recognito-Frontend/static/css/main.2ea306d2.css.map",
+    "main.e6a5de94.js.map": "/Rumour-Recognito-Frontend/static/js/main.e6a5de94.js.map"
   },
   "entrypoints": [
-    "static/css/main.ea498b24.css",
-    "static/js/main.86a39ee5.js"
+    "static/css/main.2ea306d2.css",
+    "static/js/main.e6a5de94.js"
   ]
 }

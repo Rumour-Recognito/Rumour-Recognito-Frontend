@@ -1,14 +1,17 @@
-# Getting Started with Create Rumor Recognito
+# Getting Started with Create Rumour Recognito
 
 Frontend (User Interface)
 
-## Installation Steps
+For normal usage click on the below url
+### https://rumour-recognito.github.io/Rumour-Recognito-Frontend/
 
-Clone the Rumor-Recognito-Frontend repository from GitHub OR unzip the downloaded ZIP folder 
+### Installation Steps
+
+Clone the Rumour-Recognito-Frontend repository from GitHub OR unzip the downloaded ZIP folder 
 
 ### `Requirements:`
 
-React JS has to be installed in the system
+Node and npm package needs to be installed in the system
 
 ### `Step 1: `
 Open the project in any IDE (VS Code)
@@ -20,7 +23,7 @@ Run command ‘npm install’ in terminal
 Run command ‘npm run start’ in terminal
 
 ### `Step 4: `
-Go to http://localhost:3000 for the input UI
+Go to http://localhost:3000/http://localhost:3000/Rumour-Recognito-Frontend/ for the input UI
 
 ### `Step 5: `
 Insert the news or url in the input box and click on Search button, the result will be displayed after processing.

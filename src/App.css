@@ -10,6 +10,11 @@
   text-align: center;
 }
 
+.body{
+  position: relative;
+  top: 65px;
+}
+
 .header{
   padding: 20px;
 }
@@ -20,4 +25,21 @@
 
 .resultant-verdict{
   margin-top: 50px;
+}
+
+.navbar-header{
+  /*background-color: rgba(227, 227, 227, 0.7);*/
+  background-image: linear-gradient(to right, rgba(227, 227, 227, 0.75), rgba(227, 227, 227, 0), rgba(227, 227, 227, 0.75));
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 0 20px;
+}
+
+.nav-flex{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }

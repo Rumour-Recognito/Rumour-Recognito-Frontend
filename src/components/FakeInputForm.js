@@ -4,6 +4,7 @@ import InputBase from '@mui/material/InputBase'
 import IconButton from '@mui/material/IconButton'
 import SearchIcon from '@mui/icons-material/Search'
 import MicIcon from '@mui/icons-material/Mic'
+import RefreshIcon from '@mui/icons-material/Refresh'
 import InputAdornment from '@mui/material/InputAdornment'
 
 class FakeInputForm extends React.Component {
@@ -23,13 +24,7 @@ class FakeInputForm extends React.Component {
             width: '100%'
           }}
         >
-          <IconButton
-            type="submit"
-            sx={{ p: '10px' }}
-            aria-label="search"
-            onClick={(event) => this.props.handleSubmit(event)}
-            disabled
-          >
+          <IconButton sx={{ p: '10px' }} aria-label="search" disabled>
             <SearchIcon />
           </IconButton>
           <InputBase
@@ -46,6 +41,9 @@ class FakeInputForm extends React.Component {
               isListening={this.props.isListening}
             />
           ) : null}
+          <IconButton sx={{ p: '10px' }} aria-label="refresh">
+            <RefreshIcon />
+          </IconButton>
         </Paper>
       </React.Fragment>
     )
@@ -65,7 +63,9 @@ class Voice extends React.Component {
           aria-label="search"
           onClick={(event) => this.props.handleListen(event)}
         >
-          <MicIcon style={{ color: this.props.isListening ? 'red' : 'blue' }} />
+          <MicIcon
+            style={{ color: this.props.isListening ? 'red' : '#1976d2' }}
+          />
         </IconButton>
       </>
     )

@@ -1,4 +1,4 @@
-# Getting Started with Create Rumour Recognito
+# Getting Started with Rumour Recognito Frontend
 
 Frontend (User Interface)
 

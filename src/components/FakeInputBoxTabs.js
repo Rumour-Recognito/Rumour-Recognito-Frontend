@@ -13,14 +13,20 @@ import Result from './Result'
 import Progress from './Progress'
 import TabPanel from './TabPanel'
 import axios from 'axios'
-
+import DeleteIcon from '@mui/icons-material/Delete'
 import { styled } from '@mui/material/styles'
-import IconButton from '@mui/material/IconButton'
 import PhotoCamera from '@mui/icons-material/PhotoCamera'
-import Stack from '@mui/material/Stack'
 
 //var base_url = 'http://localhost:5000'
 var base_url = 'https://rumor-recognito-backend.herokuapp.com'
+
+const SpeechRecognition =
+  window.SpeechRecognition || window.webkitSpeechRecognition
+const mic = new SpeechRecognition()
+
+mic.continuous = true
+mic.interimResults = true
+mic.lang = 'en-US'
 
 function a11yProps(index) {
   return {
@@ -84,7 +90,71 @@ class FakeInputBoxTabs extends React.Component {
       searchInputs: ['', '', '', ''],
       file: null,
       fileUrl: null,
-      output: ['', '', '', '']
+      output: ['', '', '', ''],
+      isListening: false,
+      note: null
+    }
+
+    //don't perform any operation on mic click.
+    //block the mic to handle setState operation
+    this.micIsBlocked = false
+  }
+
+  componentDidMount() {
+    mic.onstart = () => {
+      console.log('Mics on')
+    }
+
+    mic.onresult = (event) => {
+      const transcript = Array.from(event.results)
+        .map((result) => result[0])
+        .map((result) => result.transcript)
+        .join('')
+      console.log(transcript)
+
+      var newSearchInputs = this.state.searchInputs
+      newSearchInputs[2] = transcript
+      this.setState({
+        searchInput: newSearchInputs,
+        note: transcript
+      })
+
+      mic.onerror = (event) => {
+        console.log(event.error)
+      }
+    }
+  }
+
+  //control the mic
+  handleListen = (event) => {
+    event.preventDefault()
+
+    if (!this.micIsBlocked) {
+      console.log(this.micIsBlocked + ' ' + this.state.isListening)
+
+      if (!this.state.isListening) {
+        mic.start()
+        mic.onend = () => {
+          console.log('continue..')
+          mic.start()
+        }
+      } else {
+        mic.stop()
+        mic.onend = () => {
+          console.log('Stopped Mic on Click')
+        }
+      }
+
+      console.log('mic testing : ' + this.micIsBlocked)
+      this.micIsBlocked = !this.micIsBlocked
+      this.setState(
+        {
+          isListening: !this.state.isListening
+        },
+        () => {
+          this.micIsBlocked = !this.micIsBlocked
+        }
+      )
     }
   }
 
@@ -370,12 +440,16 @@ class FakeInputBoxTabs extends React.Component {
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[0]}
               handleSubmit={this.handleSubmit}
+              handleListen={this.handleListen}
               /*adorement={this.state.adorement[0]}*/
               placeholder={this.state.placeholder[0]}
             />
             <div style={{ marginTop: '25px' }}>
               {this.state.phase[0] == 0 ? (
-                <SearchButton handleSubmit={this.handleSubmit} />
+                <SearchButton
+                  handleSubmit={this.handleSubmit}
+                  searchInput={this.state.searchInputs[0]}
+                />
               ) : this.state.phase[0] == 1 ? (
                 <Progress
                   status={this.state.status[0]}
@@ -395,12 +469,16 @@ class FakeInputBoxTabs extends React.Component {
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[1]}
               handleSubmit={this.handleSubmit}
+              handleListen={this.handleListen}
               /*adorement={this.state.adorement[1]}*/
               placeholder={this.state.placeholder[1]}
             />
             <div style={{ marginTop: '25px' }}>
               {this.state.phase[1] == 0 ? (
-                <SearchButton handleSubmit={this.handleSubmit} />
+                <SearchButton
+                  handleSubmit={this.handleSubmit}
+                  searchInput={this.state.searchInputs[1]}
+                />
               ) : this.state.phase[1] == 1 ? (
                 <Progress
                   status={this.state.status[1]}
@@ -420,12 +498,18 @@ class FakeInputBoxTabs extends React.Component {
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[2]}
               handleSubmit={this.handleSubmit}
+              handleListen={this.handleListen}
+              hasAudioFeature={true}
+              isListening={this.state.isListening}
               /*adorement={this.state.adorement[2]}*/
               placeholder={this.state.placeholder[2]}
             />
             <div style={{ marginTop: '25px' }}>
               {this.state.phase[2] == 0 ? (
-                <SearchButton handleSubmit={this.handleSubmit} />
+                <SearchButton
+                  handleSubmit={this.handleSubmit}
+                  searchInput={this.state.searchInputs[2]}
+                />
               ) : this.state.phase[2] == 1 ? (
                 <Progress
                   status={this.state.status[2]}
@@ -441,15 +525,18 @@ class FakeInputBoxTabs extends React.Component {
             <img
               src={this.state.fileUrl}
               style={{
-                width: 150,
-                height: 100,
+                width: 250,
+                height: 120,
                 marginTop: '10px'
               }}
             />
-            <UploadButtons handleSearchInput={this.handleSearchInput} />
+            <UploadButton handleSearchInput={this.handleSearchInput} />
             <div style={{ marginTop: '25px' }}>
               {this.state.phase[3] == 0 ? (
-                <SearchButton handleSubmit={this.handleSubmit} />
+                <SearchButton
+                  handleSubmit={this.handleSubmit}
+                  searchInput={this.state.searchInputs[3]}
+                />
               ) : this.state.phase[3] == 1 ? (
                 <Progress
                   status={this.state.status[3]}
@@ -479,6 +566,7 @@ class SearchButton extends React.Component {
           variant="contained"
           startIcon={<TravelExploreIcon />}
           onClick={(event) => this.props.handleSubmit(event)}
+          disabled={this.props.searchInput == '' ? true : false}
         >
           Predict
         </Button>
@@ -491,7 +579,7 @@ const Input = styled('input')({
   display: 'none'
 })
 
-class UploadButtons extends React.Component {
+class UploadButton extends React.Component {
   constructor(props) {
     super(props)
   }
@@ -514,6 +602,24 @@ class UploadButtons extends React.Component {
           Upload
         </Button>
       </label>
+    )
+  }
+}
+
+class FlushButton extends React.Component {
+  render() {
+    return (
+      <>
+        <Button
+          type="submit"
+          variant="contained"
+          startIcon={<DeleteIcon />}
+          onClick={(event) => this.props.handleSubmit(event)}
+          disabled={this.props.searchInput == '' ? 'true' : ''}
+        >
+          Predict
+        </Button>
+      </>
     )
   }
 }

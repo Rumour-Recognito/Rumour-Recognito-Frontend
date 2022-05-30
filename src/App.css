@@ -29,7 +29,8 @@
 
 .navbar-header{
   /*background-color: rgba(227, 227, 227, 0.7);*/
-  background-image: linear-gradient(to right, rgba(227, 227, 227, 0.75), rgba(227, 227, 227, 0), rgba(227, 227, 227, 0.75));
+  background-image: linear-gradient(to right, rgba(227, 227, 227, 0.75), 
+      rgba(227, 227, 227, 0), rgba(227, 227, 227, 0.75));
   width: 100%;
   position: absolute;
   top: 0;
@@ -42,4 +43,58 @@
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
+}
+
+/* ------------------------------ About Us Page -----------------------------*/
+.about-body {
+  position: relative;
+  top: 120px;
+  
+}
+
+.grid {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+@media screen and (max-width: 888px) {
+  .grid {
+    flex-direction: column;
+  }
+}
+
+.designPerson {
+  display: inline-block;
+  background-color: rgba(238, 238, 238, 0.50);
+  width: 400px;
+  height: 260px;
+  padding: 30px;
+  margin: 10px;
+  text-align: center;
+  border-radius: 10px;
+  transition: all 0.3s linear;
+}
+
+.designPerson:hover {
+  box-shadow: 3px 7px 13px rgba(0, 0, 0, 0.3);
+}
+
+.designimg {
+  width: 100px;
+  border-radius: 50%;
+  border: 1px solid black;
+}
+
+.about-name{
+  margin-top: 20px;
+  font-size: 105%;
+  font-weight: 500;
+}
+
+@media screen and (max-width: 888px) {
+  .designPerson {
+    width: 75%;
+    margin: 20px auto;
+  }
 }

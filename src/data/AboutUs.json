@@ -1,0 +1,39 @@
+[
+  {
+    "id": 0,
+    "name": "Soumit Saha",
+    "img": "https://res.cloudinary.com/dltin2qiu/image/upload/v1653898945/rumour-recognito/soumit_ac1z5p.jpg",
+    "mail": "mailto:soumitsaha852@gmail.com",
+    "linkedIn": "https://www.linkedin.com/in/soumit-saha-376224172/",
+    "github": "https://github.com/Soumit915"
+  },
+
+  {
+    "id": 1,
+    "name": "Subham Bhattacharjee",
+    "img": "https://res.cloudinary.com/dltin2qiu/image/upload/v1653897556/rumour-recognito/subham_lm9ydr.jpg",
+    "mail": "mailto:subham040800@gmail.com",
+    "linkedIn": "https://www.linkedin.com/in/subham-bhattacharjee-b65267176/",
+    "github": "https://github.com/subhamb04"
+  },
+
+  {
+    "id": 2,
+    "name": "Sudipto Das",
+    "img": "https://res.cloudinary.com/dltin2qiu/image/upload/v1653897557/rumour-recognito/sudipto_uu27xj.jpg",
+    "mail": "mailto:dassudipto2010@gmail.com",
+    "linkedIn": "https://www.linkedin.com/in/sudipto-das-b28a59219/",
+    "github": "https://github.com/Sudipto-pro"
+  },
+
+  {
+    "id": 3,
+    "name": "Soumyadip Chakraborty",
+    "img": "https://res.cloudinary.com/dltin2qiu/image/upload/v1653897557/rumour-recognito/soumyadip_ead3tl.jpg",
+    "mail": "mailto:soumyadipc25@gmail.com",
+    "linkedIn": "https://www.linkedin.com/in/soumyadip-chakraborty-5b944b1a2/",
+    "github": "https://github.com/0514sm"
+  }
+
+  
+]

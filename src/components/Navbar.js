@@ -58,7 +58,7 @@ class Navbar extends React.Component {
                       icon={<HomeIcon />}
                       label="Home"
                       style={{
-                        color: this.state.activeTab == 0 ? 'blue' : 'black'
+                        color: this.state.activeTab == 0 ? '#1976d2' : 'black'
                       }}
                     />
                   </NavLink>
@@ -75,7 +75,7 @@ class Navbar extends React.Component {
                       icon={<GroupsIcon />}
                       label="About Us"
                       style={{
-                        color: this.state.activeTab == 1 ? 'blue' : 'black'
+                        color: this.state.activeTab == 1 ? '#1976d2' : 'black'
                       }}
                     />
                   </NavLink>

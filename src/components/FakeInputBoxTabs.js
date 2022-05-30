@@ -531,6 +531,10 @@ class FakeInputBoxTabs extends React.Component {
               }}
             />
             <UploadButton handleSearchInput={this.handleSearchInput} />
+            <FlushButton
+              handleSearchInput={this.handleSearchInput}
+              searchInput={this.state.searchInputs[3]}
+            />
             <div style={{ marginTop: '25px' }}>
               {this.state.phase[3] == 0 ? (
                 <SearchButton
@@ -597,7 +601,7 @@ class UploadButton extends React.Component {
           variant="contained"
           component="span"
           startIcon={<PhotoCamera />}
-          style={{ margin: '0 50px' }}
+          style={{ margin: '0 10px 0 50px' }}
         >
           Upload
         </Button>
@@ -614,10 +618,13 @@ class FlushButton extends React.Component {
           type="submit"
           variant="contained"
           startIcon={<DeleteIcon />}
+          style={{
+            backgroundColor: this.props.searchInput == '' ? '' : '#E60000'
+          }}
           onClick={(event) => this.props.handleSubmit(event)}
-          disabled={this.props.searchInput == '' ? 'true' : ''}
+          disabled={this.props.searchInput == '' ? true : false}
         >
-          Predict
+          Flush
         </Button>
       </>
     )

@@ -1,5 +1,4 @@
 import React from 'react'
-import dp from '../images/Sudipto.jpeg'
 import Person_data from '../data/AboutUs.json'
 import IconButton from '@mui/material/IconButton'
 import LinkedInIcon from '@mui/icons-material/LinkedIn'
@@ -32,7 +31,6 @@ export default class About extends React.Component {
 class Person extends React.Component {
   constructor(props) {
     super(props)
-    this.imageURL = '../images/Sudipto.jpeg'
   }
 
   render() {

@@ -3,7 +3,7 @@
 Frontend (User Interface)
 
 For normal usage click on the below url
-> https://rumour-recognito.github.io/Rumour-Recognito-Frontend/
+> https://rumour-recognito.herokuapp.com/
 
 ### Installation Steps
 >Clone the Rumour-Recognito-Frontend repository from GitHub OR unzip the downloaded ZIP folder 
@@ -21,7 +21,7 @@ For normal usage click on the below url
 > Run command `npm run start` in terminal
 
 ### Step 4:
-> Go to http://localhost:3000/http://localhost:3000/Rumour-Recognito-Frontend/ for the input UI
+> Go to http://localhost:3000/ for the input UI
 
 ### Step 5:
 > Insert the news or url in the input box and click on Search button, the result will be displayed after processing.

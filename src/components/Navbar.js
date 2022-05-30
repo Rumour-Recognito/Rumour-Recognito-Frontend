@@ -11,7 +11,7 @@ import Tabs from '@mui/material/Tabs'
 import Tab from '@mui/material/Tab'
 import Home from './Home'
 import Aboutus from './AboutUs'
-import brand from '../images/brand_logo.png'
+import brand from '../images/navbar_brand_name.png'
 
 class Navbar extends React.Component {
   constructor(props) {
@@ -28,6 +28,15 @@ class Navbar extends React.Component {
     })
   }
 
+  componentDidMount() {
+    var pathname = window.location.pathname
+    if (pathname !== '/') {
+      this.setState({
+        activeTab: 1
+      })
+    }
+  }
+
   render() {
     return (
       <>
@@ -42,7 +51,7 @@ class Navbar extends React.Component {
                     this.handleClick(0)
                   }}
                 >
-                  <img src={brand} width="135px" height="60px" />
+                  <img src={brand} width="210px" height="60px" />
                 </NavLink>
               </div>
               <div className="navbar-nav nav-flex">

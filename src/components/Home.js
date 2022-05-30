@@ -1,4 +1,5 @@
 import React from 'react'
+import brand_logo from '../images/brand_logo.png'
 import FakeInputBoxTabs from './FakeInputBoxTabs'
 
 class Home extends React.Component {
@@ -7,7 +8,7 @@ class Home extends React.Component {
       <React.Fragment>
         <div className="body">
           <header className="header">
-            <h1>Rumour Recognito</h1>
+            <img src={brand_logo} width="310px" height="125px" />
           </header>
           <div className="fakeinput-container">
             <FakeInputBoxTabs />

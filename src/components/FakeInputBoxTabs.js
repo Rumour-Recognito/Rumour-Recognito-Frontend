@@ -336,6 +336,28 @@ class FakeInputBoxTabs extends React.Component {
     return response_got
   }
 
+  //On clicking refresh of the link
+  handleRefresh = (event) => {
+    event.preventDefault()
+
+    var tab = this.state.tabValue
+
+    var newSearchInputs = this.state.searchInputs
+    newSearchInputs[tab] = ''
+
+    if (tab === 3) {
+      this.setState({
+        searchInputs: newSearchInputs,
+        file: null,
+        fileUrl: null
+      })
+    } else {
+      this.setState({
+        searchInputs: newSearchInputs
+      })
+    }
+  }
+
   //On submit of the link
   handleSubmit = async (event) => {
     event.preventDefault()
@@ -440,6 +462,7 @@ class FakeInputBoxTabs extends React.Component {
               handleSearchInput={this.handleSearchInput}
               searchInputValue={this.state.searchInputs[0]}
               handleSubmit={this.handleSubmit}
+              handleRefresh={this.handleRefresh}
               handleListen={this.handleListen}
               /*adorement={this.state.adorement[0]}*/
               placeholder={this.state.placeholder[0]}
@@ -470,6 +493,7 @@ class FakeInputBoxTabs extends React.Component {
               searchInputValue={this.state.searchInputs[1]}
               handleSubmit={this.handleSubmit}
               handleListen={this.handleListen}
+              handleRefresh={this.handleRefresh}
               /*adorement={this.state.adorement[1]}*/
               placeholder={this.state.placeholder[1]}
             />
@@ -501,6 +525,7 @@ class FakeInputBoxTabs extends React.Component {
               handleListen={this.handleListen}
               hasAudioFeature={true}
               isListening={this.state.isListening}
+              handleRefresh={this.handleRefresh}
               /*adorement={this.state.adorement[2]}*/
               placeholder={this.state.placeholder[2]}
             />
@@ -522,18 +547,22 @@ class FakeInputBoxTabs extends React.Component {
           </TabPanel>
 
           <TabPanel value={this.state.tabValue} index={3}>
-            <img
-              src={this.state.fileUrl}
-              style={{
-                width: 250,
-                height: 120,
-                marginTop: '10px'
-              }}
-            />
+            {this.state.searchInputs[3] !== '' ? (
+              <img
+                src={this.state.fileUrl}
+                style={{
+                  width: 250,
+                  height: 120,
+                  marginTop: '10px'
+                }}
+              />
+            ) : null}
+
             <UploadButton handleSearchInput={this.handleSearchInput} />
             <FlushButton
               handleSearchInput={this.handleSearchInput}
               searchInput={this.state.searchInputs[3]}
+              handleRefresh={this.handleRefresh}
             />
             <div style={{ marginTop: '25px' }}>
               {this.state.phase[3] == 0 ? (
@@ -621,7 +650,7 @@ class FlushButton extends React.Component {
           style={{
             backgroundColor: this.props.searchInput == '' ? '' : '#E60000'
           }}
-          onClick={(event) => this.props.handleSubmit(event)}
+          onClick={this.props.handleRefresh}
           disabled={this.props.searchInput == '' ? true : false}
         >
           Flush

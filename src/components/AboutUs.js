@@ -11,10 +11,6 @@ export default class About extends React.Component {
     this.person_data = Person_data
   }
 
-  handleRedirect = (link) => {
-    window.location(link)
-  }
-
   render() {
     return (
       <div className="about-body">
@@ -33,6 +29,10 @@ class Person extends React.Component {
     super(props)
   }
 
+  handleRedirect = (link) => {
+    window.open(link, '_blank')
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -42,9 +42,18 @@ class Person extends React.Component {
             <p>{this.props.person.name}</p>
           </div>
           <div>
-            <Mail />
-            <LinkedIn />
-            <Github />
+            <Mail
+              link={this.props.person.mail}
+              handleRedirect={this.handleRedirect}
+            />
+            <LinkedIn
+              link={this.props.person.linkedIn}
+              handleRedirect={this.handleRedirect}
+            />
+            <Github
+              link={this.props.person.github}
+              handleRedirect={this.handleRedirect}
+            />
           </div>
         </div>
       </React.Fragment>
@@ -59,8 +68,11 @@ class Mail extends React.Component {
         <label htmlFor="icon-button-file">
           <IconButton
             color="primary"
-            aria-label="upload picture"
+            aria-label="developer contact-mail"
             component="span"
+            onClick={() => {
+              this.props.handleRedirect(this.props.link)
+            }}
           >
             <EmailIcon style={{ color: '#E60000' }} />
           </IconButton>
@@ -77,8 +89,11 @@ class LinkedIn extends React.Component {
         <label htmlFor="icon-button-file">
           <IconButton
             color="primary"
-            aria-label="upload picture"
+            aria-label="linkedIn Profile"
             component="span"
+            onClick={() => {
+              this.props.handleRedirect(this.props.link)
+            }}
           >
             <LinkedInIcon />
           </IconButton>
@@ -95,8 +110,11 @@ class Github extends React.Component {
         <label htmlFor="icon-button-file">
           <IconButton
             color="primary"
-            aria-label="upload picture"
+            aria-label="github profile"
             component="span"
+            onClick={() => {
+              this.props.handleRedirect(this.props.link)
+            }}
           >
             <GitHubIcon style={{ color: 'black' }} />
           </IconButton>

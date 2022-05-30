@@ -41,7 +41,11 @@ class FakeInputForm extends React.Component {
               isListening={this.props.isListening}
             />
           ) : null}
-          <IconButton sx={{ p: '10px' }} aria-label="refresh">
+          <IconButton
+            sx={{ p: '10px' }}
+            aria-label="refresh"
+            onClick={this.props.handleRefresh}
+          >
             <RefreshIcon />
           </IconButton>
         </Paper>

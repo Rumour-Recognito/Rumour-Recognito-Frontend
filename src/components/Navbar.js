@@ -36,7 +36,7 @@ class Navbar extends React.Component {
             <div className="navbar navbar-header">
               <div className="navbar-brand">
                 <NavLink
-                  to="/Rumour-Recognito-Frontend/"
+                  to="/"
                   className="nav-link"
                   onClick={() => {
                     this.handleClick(0)
@@ -48,7 +48,7 @@ class Navbar extends React.Component {
               <div className="navbar-nav nav-flex">
                 <div className="nav-item">
                   <NavLink
-                    to="/Rumour-Recognito-Frontend/"
+                    to="/"
                     className="nav-link"
                     onClick={() => {
                       this.handleClick(0)
@@ -65,7 +65,7 @@ class Navbar extends React.Component {
                 </div>
                 <div className="nav-item">
                   <NavLink
-                    to="/Rumour-Recognito-Frontend/about-us"
+                    to="/about-us"
                     className="nav-link"
                     onClick={() => {
                       this.handleClick(1)
@@ -84,10 +84,10 @@ class Navbar extends React.Component {
             </div>
             <div>
               <Switch>
-                <Route path="/Rumour-Recognito-Frontend/" exact>
+                <Route path="/" exact>
                   <Home />
                 </Route>
-                <Route path="/Rumour-Recognito-Frontend/about-us">
+                <Route path="/about-us">
                   <Aboutus />
                 </Route>
               </Switch>

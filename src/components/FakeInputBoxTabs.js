@@ -17,8 +17,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { styled } from '@mui/material/styles'
 import PhotoCamera from '@mui/icons-material/PhotoCamera'
 
-var base_url = 'http://localhost:5000'
-//var base_url = 'https://rumor-recognito-backend.herokuapp.com'
+//var base_url = 'http://localhost:5000'
+var base_url = 'https://rumor-recognito-backend.herokuapp.com'
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition

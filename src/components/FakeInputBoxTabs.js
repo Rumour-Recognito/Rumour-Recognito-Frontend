@@ -100,10 +100,10 @@ class FakeInputBoxTabs extends React.Component {
   }
 
   componentDidMount() {
-    console.log('component did mount')
+    //console.log('component did mount')
 
     mic.onstart = () => {
-      console.log('Mics on')
+      //console.log('Mics on')
     }
 
     mic.onresult = (event) => {
@@ -112,7 +112,7 @@ class FakeInputBoxTabs extends React.Component {
         .map((result) => result.transcript)
         .join('')
 
-      console.log(transcript)
+      //console.log(transcript)
 
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[2] = transcript
@@ -121,7 +121,7 @@ class FakeInputBoxTabs extends React.Component {
       })
 
       mic.onerror = (event) => {
-        console.log(event.error)
+        //console.log(event.error)
       }
     }
   }
@@ -130,7 +130,7 @@ class FakeInputBoxTabs extends React.Component {
     axios
       .get(base_url + '/reset-status')
       .then(function (response) {
-        console.log('reset done')
+        //console.log('reset done')
       })
       .catch(function (error) {
         // handle error
@@ -160,7 +160,7 @@ class FakeInputBoxTabs extends React.Component {
     while (!executed) {
       try {
         const response = await axios.get(base_url + '/status')
-        console.log(response)
+        //console.log(response)
 
         var newStatus = [...this.state.status]
         newStatus[0] = response.data
@@ -197,7 +197,7 @@ class FakeInputBoxTabs extends React.Component {
     while (!executed) {
       try {
         const response = await axios.get(base_url + '/status')
-        console.log(response)
+        //console.log(response)
 
         var newStatus = [...this.state.status]
         newStatus[1] = response.data
@@ -232,7 +232,7 @@ class FakeInputBoxTabs extends React.Component {
     while (!executed) {
       try {
         const response = await axios.get(base_url + '/status')
-        console.log(response)
+        //console.log(response)
 
         var newStatus = [...this.state.status]
         newStatus[2] = response.data
@@ -273,7 +273,7 @@ class FakeInputBoxTabs extends React.Component {
     while (!executed) {
       try {
         const response = await axios.get(base_url + '/status')
-        console.log(response)
+        //console.log(response)
 
         var newStatus = [...this.state.status]
         newStatus[3] = response.data
@@ -293,22 +293,22 @@ class FakeInputBoxTabs extends React.Component {
     event.preventDefault()
 
     if (!this.micIsBlocked) {
-      console.log(this.micIsBlocked + ' ' + this.state.isListening)
+      //console.log(this.micIsBlocked + ' ' + this.state.isListening)
 
       if (!this.state.isListening) {
         mic.start()
         mic.onend = () => {
-          console.log('continue..')
+          //console.log('continue..')
           mic.start()
         }
       } else {
         mic.stop()
         mic.onend = () => {
-          console.log('Stopped Mic on Click')
+          //console.log('Stopped Mic on Click')
         }
       }
 
-      console.log('mic testing : ' + this.micIsBlocked)
+      //console.log('mic testing : ' + this.micIsBlocked)
       this.micIsBlocked = !this.micIsBlocked
       this.setState(
         {
@@ -323,16 +323,16 @@ class FakeInputBoxTabs extends React.Component {
 
   //control the Input-box
   handleSearchInput = (event) => {
-    console.log('test ', this.state.searchInputs)
+    //console.log('test ', this.state.searchInputs)
 
     if (this.state.tabValue == 3) {
-      console.log('for image tab change')
-      console.log(event.target.value)
+      //console.log('for image tab change')
+      //console.log(event.target.value)
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[this.state.tabValue] = event.target.value
 
       if (this.state.tabValue == 3 && event.target.files[0] !== undefined) {
-        console.log(event.target.files[0])
+        //console.log(event.target.files[0])
         this.setState({
           searchInputs: newSearchInputs,
           file: event.target.files[0],
@@ -340,7 +340,7 @@ class FakeInputBoxTabs extends React.Component {
         })
       }
     } else {
-      console.log('for other tabs')
+      //console.log('for other tabs')
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[this.state.tabValue] = event.target.value
       this.setState({
@@ -353,7 +353,7 @@ class FakeInputBoxTabs extends React.Component {
   handleRefresh = (event) => {
     event.preventDefault()
 
-    console.log('handling refresh')
+    //console.log('handling refresh')
 
     var tab = this.state.tabValue
 

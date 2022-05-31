@@ -48,7 +48,7 @@
 /* ------------------------------ About Us Page -----------------------------*/
 .about-body {
   position: relative;
-  top: 120px;
+  top: 90px;
   
 }
 
@@ -64,20 +64,25 @@
   }
 }
 
+.design-about-header{
+  text-shadow: 12px 9px 14px;
+}
+
 .designPerson {
   display: inline-block;
-  background-color: rgba(238, 238, 238, 0.50);
+  background-color: rgba(238, 238, 238, 0);
   width: 400px;
   height: 260px;
   padding: 30px;
   margin: 10px;
   text-align: center;
   border-radius: 10px;
-  transition: all 0.3s linear;
+  transition: all 0.5s linear;
 }
 
 .designPerson:hover {
-  box-shadow: 3px 7px 13px rgba(0, 0, 0, 0.3);
+  background-color: rgba(238, 238, 238, 1);
+  box-shadow: 4px 9px 15px rgba(0, 0, 0, 1);
 }
 
 .designimg {
@@ -90,6 +95,16 @@
   margin-top: 20px;
   font-size: 105%;
   font-weight: 500;
+}
+
+.about-footer{
+  background-color: rgba(0, 0, 0, 0.9);
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 10px 20px;
+  text-align: center;
 }
 
 @media screen and (max-width: 888px) {

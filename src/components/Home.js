@@ -8,7 +8,7 @@ class Home extends React.Component {
       <React.Fragment>
         <div className="body">
           <header className="header">
-            <img src={brand_logo} width="310px" height="125px" />
+            <img src={brand_logo} width="280px" height="120px" />
           </header>
           <div className="fakeinput-container">
             <FakeInputBoxTabs />

@@ -51,7 +51,7 @@ class Navbar extends React.Component {
                     this.handleClick(0)
                   }}
                 >
-                  <img src={brand} width="210px" height="60px" />
+                  <img src={brand} width="210px" height="55px" />
                 </NavLink>
               </div>
               <div className="navbar-nav nav-flex">
@@ -67,7 +67,8 @@ class Navbar extends React.Component {
                       icon={<HomeIcon />}
                       label="Home"
                       style={{
-                        color: this.state.activeTab == 0 ? '#1976d2' : 'black'
+                        color: this.state.activeTab == 0 ? '#1976d2' : 'black',
+                        borderRadius: '35%'
                       }}
                     />
                   </NavLink>
@@ -84,7 +85,8 @@ class Navbar extends React.Component {
                       icon={<GroupsIcon />}
                       label="About Us"
                       style={{
-                        color: this.state.activeTab == 1 ? '#1976d2' : 'black'
+                        color: this.state.activeTab == 1 ? '#1976d2' : 'black',
+                        borderRadius: '35%'
                       }}
                     />
                   </NavLink>

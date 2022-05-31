@@ -14,6 +14,9 @@ export default class About extends React.Component {
   render() {
     return (
       <div className="about-body">
+        <div>
+          <h1 className="design-about-header">Team Squadra</h1>
+        </div>
         <section className="grid">
           {this.person_data.map((item) => {
             return <Person person={item} key={item.id} />
@@ -36,7 +39,13 @@ class Person extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div className="designPerson" id="">
+        <div
+          className="designPerson"
+          id=""
+          style={{
+            marginTop: this.props.person.id % 2 == 0 ? '10px' : '120px'
+          }}
+        >
           <img src={this.props.person.img} className="designimg" alt="" />
           <div className="about-name">
             <p>{this.props.person.name}</p>

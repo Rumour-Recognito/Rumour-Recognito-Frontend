@@ -17,8 +17,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { styled } from '@mui/material/styles'
 import PhotoCamera from '@mui/icons-material/PhotoCamera'
 
-//var base_url = 'http://localhost:5000'
-var base_url = 'https://rumor-recognito-backend.herokuapp.com'
+var base_url = 'http://localhost:5000'
+//var base_url = 'https://rumor-recognito-backend.herokuapp.com'
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition
@@ -91,8 +91,7 @@ class FakeInputBoxTabs extends React.Component {
       file: null,
       fileUrl: null,
       output: ['', '', '', ''],
-      isListening: false,
-      note: null
+      isListening: false
     }
 
     //don't perform any operation on mic click.
@@ -101,6 +100,8 @@ class FakeInputBoxTabs extends React.Component {
   }
 
   componentDidMount() {
+    console.log('component did mount')
+
     mic.onstart = () => {
       console.log('Mics on')
     }
@@ -110,67 +111,18 @@ class FakeInputBoxTabs extends React.Component {
         .map((result) => result[0])
         .map((result) => result.transcript)
         .join('')
+
       console.log(transcript)
 
-      var newSearchInputs = this.state.searchInputs
+      var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[2] = transcript
       this.setState({
-        searchInput: newSearchInputs,
-        note: transcript
+        searchInputs: newSearchInputs
       })
 
       mic.onerror = (event) => {
         console.log(event.error)
       }
-    }
-  }
-
-  //control the mic
-  handleListen = (event) => {
-    event.preventDefault()
-
-    if (!this.micIsBlocked) {
-      console.log(this.micIsBlocked + ' ' + this.state.isListening)
-
-      if (!this.state.isListening) {
-        mic.start()
-        mic.onend = () => {
-          console.log('continue..')
-          mic.start()
-        }
-      } else {
-        mic.stop()
-        mic.onend = () => {
-          console.log('Stopped Mic on Click')
-        }
-      }
-
-      console.log('mic testing : ' + this.micIsBlocked)
-      this.micIsBlocked = !this.micIsBlocked
-      this.setState(
-        {
-          isListening: !this.state.isListening
-        },
-        () => {
-          this.micIsBlocked = !this.micIsBlocked
-        }
-      )
-    }
-  }
-
-  //control the Input-box
-  handleSearchInput = (event) => {
-    var newSearchInputs = this.state.searchInputs
-    newSearchInputs[this.state.tabValue] = event.target.value
-    this.setState({
-      searchInputs: newSearchInputs
-    })
-    if (this.state.tabValue == 3) {
-      console.log(event.target.files[0])
-      this.setState({
-        file: event.target.files[0],
-        fileUrl: URL.createObjectURL(event.target.files[0])
-      })
     }
   }
 
@@ -210,7 +162,7 @@ class FakeInputBoxTabs extends React.Component {
         const response = await axios.get(base_url + '/status')
         console.log(response)
 
-        var newStatus = this.state.status
+        var newStatus = [...this.state.status]
         newStatus[0] = response.data
         this.setState({
           status: newStatus
@@ -247,7 +199,7 @@ class FakeInputBoxTabs extends React.Component {
         const response = await axios.get(base_url + '/status')
         console.log(response)
 
-        var newStatus = this.state.status
+        var newStatus = [...this.state.status]
         newStatus[1] = response.data
         this.setState({
           status: newStatus
@@ -282,7 +234,7 @@ class FakeInputBoxTabs extends React.Component {
         const response = await axios.get(base_url + '/status')
         console.log(response)
 
-        var newStatus = this.state.status
+        var newStatus = [...this.state.status]
         newStatus[2] = response.data
         this.setState({
           status: newStatus
@@ -323,7 +275,7 @@ class FakeInputBoxTabs extends React.Component {
         const response = await axios.get(base_url + '/status')
         console.log(response)
 
-        var newStatus = this.state.status
+        var newStatus = [...this.state.status]
         newStatus[3] = response.data
         this.setState({
           status: newStatus
@@ -336,23 +288,91 @@ class FakeInputBoxTabs extends React.Component {
     return response_got
   }
 
+  //control the mic
+  handleListen = (event) => {
+    event.preventDefault()
+
+    if (!this.micIsBlocked) {
+      console.log(this.micIsBlocked + ' ' + this.state.isListening)
+
+      if (!this.state.isListening) {
+        mic.start()
+        mic.onend = () => {
+          console.log('continue..')
+          mic.start()
+        }
+      } else {
+        mic.stop()
+        mic.onend = () => {
+          console.log('Stopped Mic on Click')
+        }
+      }
+
+      console.log('mic testing : ' + this.micIsBlocked)
+      this.micIsBlocked = !this.micIsBlocked
+      this.setState(
+        {
+          isListening: !this.state.isListening
+        },
+        () => {
+          this.micIsBlocked = !this.micIsBlocked
+        }
+      )
+    }
+  }
+
+  //control the Input-box
+  handleSearchInput = (event) => {
+    console.log('test ', this.state.searchInputs)
+
+    if (this.state.tabValue == 3) {
+      console.log('for image tab change')
+      console.log(event.target.value)
+      var newSearchInputs = [...this.state.searchInputs]
+      newSearchInputs[this.state.tabValue] = event.target.value
+
+      if (this.state.tabValue == 3 && event.target.files[0] !== undefined) {
+        console.log(event.target.files[0])
+        this.setState({
+          searchInputs: newSearchInputs,
+          file: event.target.files[0],
+          fileUrl: URL.createObjectURL(event.target.files[0])
+        })
+      }
+    } else {
+      console.log('for other tabs')
+      var newSearchInputs = [...this.state.searchInputs]
+      newSearchInputs[this.state.tabValue] = event.target.value
+      this.setState({
+        searchInputs: newSearchInputs
+      })
+    }
+  }
+
   //On clicking refresh of the link
   handleRefresh = (event) => {
     event.preventDefault()
 
+    console.log('handling refresh')
+
     var tab = this.state.tabValue
 
-    var newSearchInputs = this.state.searchInputs
+    var newSearchInputs = [...this.state.searchInputs]
     newSearchInputs[tab] = ''
+
+    var newPhase = [...this.state.phase]
+    newPhase[tab] = 0
 
     if (tab === 3) {
       this.setState({
+        phase: newPhase,
         searchInputs: newSearchInputs,
         file: null,
         fileUrl: null
       })
     } else {
       this.setState({
+        phase: newPhase,
         searchInputs: newSearchInputs
       })
     }
@@ -367,7 +387,7 @@ class FakeInputBoxTabs extends React.Component {
     var postText = this.state.searchInputs[tab] //to get the input
     var verdict
 
-    var newPhase = this.state.phase
+    var newPhase = [...this.state.phase]
     newPhase[tab] = 1
 
     this.setState({
@@ -382,6 +402,9 @@ class FakeInputBoxTabs extends React.Component {
       verdict = await this.analyseTwitterPost(postText)
     } else if (tab === 2) {
       //analyse normal news
+      if (this.state.isListening) {
+        this.handleListen(event)
+      }
 
       verdict = await this.analyseNormalNews(postText)
     } else {
@@ -391,13 +414,13 @@ class FakeInputBoxTabs extends React.Component {
 
     this.resetStatus()
 
-    var newOutput = this.state.output
+    var newOutput = [...this.state.output]
     newOutput[tab] = verdict.data
 
-    newPhase = this.state.phase
+    newPhase = [...this.state.phase]
     newPhase[tab] = 2
 
-    var newStatus = this.state.status
+    var newStatus = [...this.state.status]
     newStatus[tab] = -1
 
     this.setState({

@@ -17,8 +17,8 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { styled } from '@mui/material/styles'
 import PhotoCamera from '@mui/icons-material/PhotoCamera'
 
-//var base_url = 'http://localhost:5000'
-var base_url = 'https://rumor-recognito-backend.herokuapp.com'
+var base_url = 'http://localhost:5000'
+//var base_url = 'https://rumor-recognito-backend.herokuapp.com'
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition
@@ -138,12 +138,47 @@ class FakeInputBoxTabs extends React.Component {
       })
   }
 
-  analyseFacebookPost = async (postUrl) => {
+  deleteJobFromDb = async (id) => {
+    var jobId = ""
+    axios
+      .delete(base_url + '/deleteId' + '?jobId=' + id)
+      .then(function (response) {
+        // handle success
+        console.log(response.data)
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+
+    return jobId
+  }
+
+
+  getJobIdFromServer = async () => {
+    var jobId = ""
+    axios
+      .get(base_url + '/getId')
+      .then(function (response) {
+        // handle success
+        console.log(response.data)
+        jobId = response.data
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
+
+    return jobId
+  }
+
+  analyseFacebookPost = async (postUrl, id) => {
     var executed = false
     var response_got = null
     axios
       .post(base_url + '/facebook-scrape', {
-        link: postUrl
+        link: postUrl,
+        jobId: id
       })
       .then(function (response) {
         // handle success
@@ -159,7 +194,7 @@ class FakeInputBoxTabs extends React.Component {
 
     while (!executed) {
       try {
-        const response = await axios.get(base_url + '/status')
+        const response = await axios.get(base_url + '/status' + '?jobId=' + id)
         //console.log(response)
 
         var newStatus = [...this.state.status]
@@ -175,12 +210,13 @@ class FakeInputBoxTabs extends React.Component {
     return response_got
   }
 
-  analyseTwitterPost = async (postUrl) => {
+  analyseTwitterPost = async (postUrl, id) => {
     var executed = false
     var response_got = null
     axios
       .post(base_url + '/tweet-scrape', {
-        link: postUrl
+        link: postUrl,
+        jobId: id
       })
       .then(function (response) {
         // handle success
@@ -196,7 +232,7 @@ class FakeInputBoxTabs extends React.Component {
 
     while (!executed) {
       try {
-        const response = await axios.get(base_url + '/status')
+        const response = await axios.get(base_url + '/status' + '?jobId=' + id)
         //console.log(response)
 
         var newStatus = [...this.state.status]
@@ -212,11 +248,11 @@ class FakeInputBoxTabs extends React.Component {
     return response_got
   }
 
-  analyseNormalNews = async (news) => {
+  analyseNormalNews = async (news, id) => {
     var executed = false
     var response_got = null
     axios
-      .get(base_url + '/plain-text?text=' + news)
+      .get(base_url + '/plain-text?text=' + news + '&jobId=' + id)
       .then(function (response) {
         // handle success
         response_got = response
@@ -231,7 +267,7 @@ class FakeInputBoxTabs extends React.Component {
 
     while (!executed) {
       try {
-        const response = await axios.get(base_url + '/status')
+        const response = await axios.get(base_url + '/status' + '?jobId=' + id)
         //console.log(response)
 
         var newStatus = [...this.state.status]
@@ -247,13 +283,13 @@ class FakeInputBoxTabs extends React.Component {
     return response_got
   }
 
-  analyseImage = async (imageFile) => {
+  analyseImage = async (imageFile, id) => {
     var executed = false
     var response_got = null
     const formData = new FormData()
     formData.append('file', imageFile)
     axios
-      .post(base_url + '/analyze-image', formData, {
+      .post(base_url + '/analyze-image' + '?jobId=' + id, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -272,7 +308,7 @@ class FakeInputBoxTabs extends React.Component {
 
     while (!executed) {
       try {
-        const response = await axios.get(base_url + '/status')
+        const response = await axios.get(base_url + '/status' + '?jobId=' + id)
         //console.log(response)
 
         var newStatus = [...this.state.status]
@@ -394,22 +430,24 @@ class FakeInputBoxTabs extends React.Component {
       phase: newPhase
     })
 
+    var jobId = await this.getJobIdFromServer()
+
     if (tab === 0) {
       //analyse facebook post
-      verdict = await this.analyseFacebookPost(postText)
+      verdict = await this.analyseFacebookPost(postText, jobId)
     } else if (tab === 1) {
       //analyse twitter post
-      verdict = await this.analyseTwitterPost(postText)
+      verdict = await this.analyseTwitterPost(postText, jobId)
     } else if (tab === 2) {
       //analyse normal news
       if (this.state.isListening) {
         this.handleListen(event)
       }
 
-      verdict = await this.analyseNormalNews(postText)
+      verdict = await this.analyseNormalNews(postText, jobId)
     } else {
       var imageFile = this.state.file
-      verdict = await this.analyseImage(imageFile)
+      verdict = await this.analyseImage(imageFile, jobId)
     }
 
     this.resetStatus()

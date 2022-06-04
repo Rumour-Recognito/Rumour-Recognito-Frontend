@@ -322,6 +322,10 @@ class FakeInputBoxTabs extends React.Component {
 
   //control the Input-box
   handleSearchInput = (event) => {
+    console.log(this.state.file)
+    console.log(this.state.fileUrl)
+    console.log(event)
+
     if (this.state.tabValue == 3) {
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[this.state.tabValue] = event.target.value
@@ -584,7 +588,10 @@ class FakeInputBoxTabs extends React.Component {
               />
             ) : null}
 
-            <UploadButton handleSearchInput={this.handleSearchInput} />
+            <UploadButton
+              handleSearchInput={this.handleSearchInput}
+              value={this.state.searchInputs[3]}
+            />
             <FlushButton
               handleSearchInput={this.handleSearchInput}
               searchInput={this.state.searchInputs[3]}
@@ -651,6 +658,7 @@ class UploadButton extends React.Component {
           id="icon-button-file"
           type="file"
           onChange={(event) => this.props.handleSearchInput(event)}
+          value={this.props.value}
         />
         <Button
           variant="contained"

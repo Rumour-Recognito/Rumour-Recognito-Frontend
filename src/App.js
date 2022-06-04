@@ -3,10 +3,20 @@ import 'bootstrap/dist/css/bootstrap.css'
 import './App.css'
 import footer_brand_logo from './images/footer_brand_logo.png'
 
+import axios from 'axios'
+
 import Navbar from './components/Navbar'
 import IconButton from '@mui/material/IconButton'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import EmailIcon from '@mui/icons-material/Email'
+
+var base_url = ''
+if (
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1'
+)
+  base_url = 'http://localhost:5000'
+else base_url = 'https://rumor-recognito-backend.herokuapp.com'
 
 class App extends React.Component {
   //defining the state variable
@@ -17,6 +27,20 @@ class App extends React.Component {
     this.state = {
       activeTab: 0
     }
+
+    this.awakeServer()
+  }
+
+  awakeServer = () => {
+    axios
+      .get(base_url)
+      .then(function (response) {
+        // handle success
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
   }
 
   componentDidMount() {

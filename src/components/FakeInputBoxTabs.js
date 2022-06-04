@@ -155,20 +155,13 @@ class FakeInputBoxTabs extends React.Component {
   }
 
   getJobIdFromServer = async () => {
-    var jobId = ''
-    axios
-      .get(base_url + '/getId')
-      .then(function (response) {
-        // handle success
-        console.log(response.data)
-        jobId = response.data
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error)
-      })
-
-    return jobId
+    try {
+      const response = await axios.get(base_url + '/getId')
+      console.log(response.data)
+      return response.data
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   analyseFacebookPost = async (postUrl, id) => {
@@ -430,6 +423,7 @@ class FakeInputBoxTabs extends React.Component {
     })
 
     var jobId = await this.getJobIdFromServer()
+    console.log('testing bro: ', jobId, ' ...')
 
     if (tab === 0) {
       //analyse facebook post

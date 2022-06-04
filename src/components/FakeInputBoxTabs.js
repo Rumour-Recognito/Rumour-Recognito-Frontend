@@ -18,10 +18,12 @@ import { styled } from '@mui/material/styles'
 import PhotoCamera from '@mui/icons-material/PhotoCamera'
 
 var base_url = ''
-if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+if (
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1'
+)
   base_url = 'http://localhost:5000'
-else
-  base_url = 'https://rumor-recognito-backend.herokuapp.com'
+else base_url = 'https://rumor-recognito-backend.herokuapp.com'
 
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition
@@ -46,6 +48,7 @@ class FakeInputBoxTabs extends React.Component {
       tabValue: 0,
       phase: [0, 0, 0, 0],
       status: [-1, -1, -1, -1],
+      jobId: [null, null, null, null],
       progressSteps: [
         [
           'Scrapping Facebook Data',
@@ -103,11 +106,7 @@ class FakeInputBoxTabs extends React.Component {
   }
 
   componentDidMount() {
-    //console.log('component did mount')
-
-    mic.onstart = () => {
-      //console.log('Mics on')
-    }
+    mic.onstart = () => {}
 
     mic.onresult = (event) => {
       const transcript = Array.from(event.results)
@@ -115,44 +114,35 @@ class FakeInputBoxTabs extends React.Component {
         .map((result) => result.transcript)
         .join('')
 
-      //console.log(transcript)
-
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[2] = transcript
       this.setState({
         searchInputs: newSearchInputs
       })
 
-      mic.onerror = (event) => {
-        //console.log(event.error)
-      }
+      mic.onerror = (event) => {}
     }
-  }
-
-  deleteJobFromDb = async (id) => {
-    var jobId = ''
-    axios
-      .delete(base_url + '/deleteId' + '?jobId=' + id)
-      .then(function (response) {
-        // handle success
-        console.log(response.data)
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error)
-      })
-
-    return jobId
   }
 
   getJobIdFromServer = async () => {
     try {
       const response = await axios.get(base_url + '/getId')
-      console.log(response.data)
       return response.data
     } catch (error) {
       console.error(error)
     }
+  }
+
+  deleteJobFromDb = (id) => {
+    axios
+      .delete(base_url + '/deleteId' + '?jobId=' + id)
+      .then(function (response) {
+        // handle success
+      })
+      .catch(function (error) {
+        // handle error
+        console.log(error)
+      })
   }
 
   analyseFacebookPost = async (postUrl, id) => {
@@ -178,7 +168,6 @@ class FakeInputBoxTabs extends React.Component {
     while (!executed) {
       try {
         const response = await axios.get(base_url + '/status' + '?jobId=' + id)
-        //console.log(response)
 
         var newStatus = [...this.state.status]
         newStatus[0] = response.data
@@ -216,7 +205,6 @@ class FakeInputBoxTabs extends React.Component {
     while (!executed) {
       try {
         const response = await axios.get(base_url + '/status' + '?jobId=' + id)
-        //console.log(response)
 
         var newStatus = [...this.state.status]
         newStatus[1] = response.data
@@ -251,7 +239,6 @@ class FakeInputBoxTabs extends React.Component {
     while (!executed) {
       try {
         const response = await axios.get(base_url + '/status' + '?jobId=' + id)
-        //console.log(response)
 
         var newStatus = [...this.state.status]
         newStatus[2] = response.data
@@ -292,7 +279,6 @@ class FakeInputBoxTabs extends React.Component {
     while (!executed) {
       try {
         const response = await axios.get(base_url + '/status' + '?jobId=' + id)
-        //console.log(response)
 
         var newStatus = [...this.state.status]
         newStatus[3] = response.data
@@ -312,22 +298,16 @@ class FakeInputBoxTabs extends React.Component {
     event.preventDefault()
 
     if (!this.micIsBlocked) {
-      //console.log(this.micIsBlocked + ' ' + this.state.isListening)
-
       if (!this.state.isListening) {
         mic.start()
         mic.onend = () => {
-          //console.log('continue..')
           mic.start()
         }
       } else {
         mic.stop()
-        mic.onend = () => {
-          //console.log('Stopped Mic on Click')
-        }
+        mic.onend = () => {}
       }
 
-      //console.log('mic testing : ' + this.micIsBlocked)
       this.micIsBlocked = !this.micIsBlocked
       this.setState(
         {
@@ -342,16 +322,11 @@ class FakeInputBoxTabs extends React.Component {
 
   //control the Input-box
   handleSearchInput = (event) => {
-    //console.log('test ', this.state.searchInputs)
-
     if (this.state.tabValue == 3) {
-      //console.log('for image tab change')
-      //console.log(event.target.value)
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[this.state.tabValue] = event.target.value
 
       if (this.state.tabValue == 3 && event.target.files[0] !== undefined) {
-        //console.log(event.target.files[0])
         this.setState({
           searchInputs: newSearchInputs,
           file: event.target.files[0],
@@ -359,7 +334,6 @@ class FakeInputBoxTabs extends React.Component {
         })
       }
     } else {
-      //console.log('for other tabs')
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[this.state.tabValue] = event.target.value
       this.setState({
@@ -369,10 +343,8 @@ class FakeInputBoxTabs extends React.Component {
   }
 
   //On clicking refresh of the link
-  handleRefresh = (event) => {
+  handleRefresh = async (event) => {
     event.preventDefault()
-
-    //console.log('handling refresh')
 
     var tab = this.state.tabValue
 
@@ -382,17 +354,25 @@ class FakeInputBoxTabs extends React.Component {
     var newPhase = [...this.state.phase]
     newPhase[tab] = 0
 
+    var newJobIds = [...this.state.jobId]
+    newJobIds[tab] = null
+
+    var curJobId = this.state.jobId[tab]
+    this.deleteJobFromDb(curJobId)
+
     if (tab === 3) {
       this.setState({
         phase: newPhase,
         searchInputs: newSearchInputs,
+        jobId: newJobIds,
         file: null,
         fileUrl: null
       })
     } else {
       this.setState({
         phase: newPhase,
-        searchInputs: newSearchInputs
+        searchInputs: newSearchInputs,
+        jobId: newJobIds
       })
     }
   }
@@ -409,12 +389,15 @@ class FakeInputBoxTabs extends React.Component {
     var newPhase = [...this.state.phase]
     newPhase[tab] = 1
 
-    this.setState({
-      phase: newPhase
-    })
-
     var jobId = await this.getJobIdFromServer()
-    console.log('testing bro: ', jobId, ' ...')
+
+    var newJobIds = [...this.state.jobId]
+    newJobIds[tab] = jobId
+
+    this.setState({
+      phase: newPhase,
+      jobId: newJobIds
+    })
 
     if (tab === 0) {
       //analyse facebook post

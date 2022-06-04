@@ -139,7 +139,7 @@ class FakeInputBoxTabs extends React.Component {
   }
 
   deleteJobFromDb = async (id) => {
-    var jobId = ""
+    var jobId = ''
     axios
       .delete(base_url + '/deleteId' + '?jobId=' + id)
       .then(function (response) {
@@ -154,9 +154,8 @@ class FakeInputBoxTabs extends React.Component {
     return jobId
   }
 
-
   getJobIdFromServer = async () => {
-    var jobId = ""
+    var jobId = ''
     axios
       .get(base_url + '/getId')
       .then(function (response) {

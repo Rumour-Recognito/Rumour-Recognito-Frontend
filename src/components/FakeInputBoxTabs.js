@@ -129,18 +129,6 @@ class FakeInputBoxTabs extends React.Component {
     }
   }
 
-  resetStatus = () => {
-    axios
-      .get(base_url + '/reset-status')
-      .then(function (response) {
-        //console.log('reset done')
-      })
-      .catch(function (error) {
-        // handle error
-        console.log(error)
-      })
-  }
-
   deleteJobFromDb = async (id) => {
     var jobId = ''
     axios
@@ -445,8 +433,6 @@ class FakeInputBoxTabs extends React.Component {
       var imageFile = this.state.file
       verdict = await this.analyseImage(imageFile, jobId)
     }
-
-    this.resetStatus()
 
     var newOutput = [...this.state.output]
     newOutput[tab] = verdict.data

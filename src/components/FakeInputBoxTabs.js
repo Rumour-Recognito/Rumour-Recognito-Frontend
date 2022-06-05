@@ -313,13 +313,13 @@ class FakeInputBoxTabs extends React.Component {
         mic.onend = () => {}
       }
 
-      this.micIsBlocked = !this.micIsBlocked
+      this.micIsBlocked = true
       this.setState(
         {
           isListening: !this.state.isListening
         },
         () => {
-          this.micIsBlocked = !this.micIsBlocked
+          this.micIsBlocked = false
         }
       )
     }
@@ -327,6 +327,8 @@ class FakeInputBoxTabs extends React.Component {
 
   //control the Input-box
   handleSearchInput = (event) => {
+    console.log('changing')
+
     if (this.state.tabValue == 3) {
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[this.state.tabValue] = event.target.value
@@ -405,6 +407,8 @@ class FakeInputBoxTabs extends React.Component {
       jobId: newJobIds
     })
 
+    console.log('searchInput : ', this.state.searchInputs[tab])
+
     if (tab === 0) {
       //analyse facebook post
       verdict = await this.analyseFacebookPost(postText, jobId)
@@ -440,6 +444,8 @@ class FakeInputBoxTabs extends React.Component {
   }
 
   handleTabChange = (event, newValue) => {
+    console.log(this.state.searchInputs)
+
     this.setState({
       tabValue: newValue
     })
@@ -656,6 +662,13 @@ const Input = styled('input')({
 class UploadButton extends React.Component {
   constructor(props) {
     super(props)
+
+    console.log(this.props.value)
+  }
+
+  componentDidMount() {
+    console.log('test')
+    console.log(this.props.value)
   }
 
   render() {
@@ -666,7 +679,6 @@ class UploadButton extends React.Component {
           id="icon-button-file"
           type="file"
           onChange={(event) => this.props.handleSearchInput(event)}
-          value={this.props.value}
         />
         <Button
           variant="contained"

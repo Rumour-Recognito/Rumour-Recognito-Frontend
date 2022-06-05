@@ -364,9 +364,7 @@ class FakeInputBoxTabs extends React.Component {
 
     var curJobId = this.state.jobId[tab]
 
-    if (curJobId == null) return
-
-    this.deleteJobFromDb(curJobId)
+    if (curJobId != null) this.deleteJobFromDb(curJobId)
 
     if (tab === 3) {
       this.setState({

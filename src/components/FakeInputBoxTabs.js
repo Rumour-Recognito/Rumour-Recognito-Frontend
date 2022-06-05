@@ -105,6 +105,11 @@ class FakeInputBoxTabs extends React.Component {
     this.micIsBlocked = false
   }
 
+  handleSubmitRefresh = (event) => {
+    event.preventDefault()
+    console.log('test')
+  }
+
   componentDidMount() {
     mic.onstart = () => {}
 
@@ -322,10 +327,6 @@ class FakeInputBoxTabs extends React.Component {
 
   //control the Input-box
   handleSearchInput = (event) => {
-    console.log(this.state.file)
-    console.log(this.state.fileUrl)
-    console.log(event)
-
     if (this.state.tabValue == 3) {
       var newSearchInputs = [...this.state.searchInputs]
       newSearchInputs[this.state.tabValue] = event.target.value
@@ -502,6 +503,7 @@ class FakeInputBoxTabs extends React.Component {
                 <SearchButton
                   handleSubmit={this.handleSubmit}
                   searchInput={this.state.searchInputs[0]}
+                  submit={this.handleSubmitRefresh}
                 />
               ) : this.state.phase[0] == 1 ? (
                 <Progress
@@ -532,6 +534,7 @@ class FakeInputBoxTabs extends React.Component {
                 <SearchButton
                   handleSubmit={this.handleSubmit}
                   searchInput={this.state.searchInputs[1]}
+                  submit={this.handleSubmitRefresh}
                 />
               ) : this.state.phase[1] == 1 ? (
                 <Progress
@@ -564,6 +567,7 @@ class FakeInputBoxTabs extends React.Component {
                 <SearchButton
                   handleSubmit={this.handleSubmit}
                   searchInput={this.state.searchInputs[2]}
+                  submit={this.handleSubmitRefresh}
                 />
               ) : this.state.phase[2] == 1 ? (
                 <Progress
@@ -596,12 +600,14 @@ class FakeInputBoxTabs extends React.Component {
               handleSearchInput={this.handleSearchInput}
               searchInput={this.state.searchInputs[3]}
               handleRefresh={this.handleRefresh}
+              submit={this.handleSubmitRefresh}
             />
             <div style={{ marginTop: '25px' }}>
               {this.state.phase[3] == 0 ? (
                 <SearchButton
                   handleSubmit={this.handleSubmit}
                   searchInput={this.state.searchInputs[3]}
+                  submit={this.handleSubmitRefresh}
                 />
               ) : this.state.phase[3] == 1 ? (
                 <Progress
@@ -633,6 +639,7 @@ class SearchButton extends React.Component {
           startIcon={<TravelExploreIcon />}
           onClick={(event) => this.props.handleSubmit(event)}
           disabled={this.props.searchInput == '' ? true : false}
+          onSubmit={this.props.submit}
         >
           Predict
         </Button>
@@ -686,6 +693,7 @@ class FlushButton extends React.Component {
           }}
           onClick={this.props.handleRefresh}
           disabled={this.props.searchInput == '' ? true : false}
+          onSubmit={this.props.submit}
         >
           Flush
         </Button>

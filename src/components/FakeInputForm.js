@@ -12,6 +12,10 @@ class FakeInputForm extends React.Component {
     super(props)
   }
 
+  handleSubmitRefresh = (event) => {
+    event.preventDefault()
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -23,6 +27,7 @@ class FakeInputForm extends React.Component {
             justifyContent: 'center',
             width: '100%'
           }}
+          onSubmit={this.handleSubmitRefresh}
         >
           <IconButton sx={{ p: '10px' }} aria-label="search" disabled>
             <SearchIcon />
